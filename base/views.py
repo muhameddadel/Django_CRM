@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Lead
+from .models import Lead, Agent
+from .forms import LeadForm, LeadModelForm
 # Create your views here.
 
 def lead_list(request):
@@ -17,3 +18,18 @@ def lead_detail(request, pk):
         'lead': lead
     }
     return render(request, 'base/lead_detail.html', context)
+
+
+def lead_create(request):
+    if request.method == "POST":
+        form = LeadModelForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/base')
+    else:
+        form = LeadModelForm()
+
+    context = {
+        "form": form
+    }
+    return render(request, 'base/lead_create.html', context)
