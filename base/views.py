@@ -1,12 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
+from django.views.generic import *
 from .models import Lead, Agent
 from .forms import LeadForm, LeadModelForm
 # Create your views here.
 
 
+class LandingPageView(TemplateView):
+    template_name = 'landing.html'
+
+
 def landing_page(request):
     return render(request, 'landing.html')
+
+
+class LeadListView(ListView):
+    queryset = Lead.objects.all()
+    template_name = 'base/lead_list.html'
+    context_object_name = 'leads'
 
 
 def lead_list(request):
@@ -17,12 +28,26 @@ def lead_list(request):
     return render(request,'base/lead_list.html', context)
 
 
+class LeadDetailView(DetailView):
+    queryset = Lead.objects.all()
+    template_name = 'base/lead_detail.html'
+    context_object_name = 'lead'
+
+
 def lead_detail(request, pk):
     lead = Lead.objects.get(pk= pk)
     context = {
         'lead': lead
     }
     return render(request, 'base/lead_detail.html', context)
+
+
+class LeadCreateView(CreateView):
+    form_class = LeadModelForm
+    template_name = 'base/lead_create.html'
+    
+    def get_success_url(self) -> str:
+        return reverse('base:lead-list')
 
 
 def lead_create(request):
@@ -40,6 +65,15 @@ def lead_create(request):
     return render(request, 'base/lead_create.html', context)
 
 
+class LeadUpdateView(UpdateView):
+    form_class = LeadModelForm
+    queryset = Lead.objects.all()
+    template_name = 'base/lead_update.html'
+    
+    def get_success_url(self) -> str:
+        return reverse('base:lead-list')
+
+
 def lead_update(request, pk):
     lead = Lead.objects.get(pk= pk)
     form = LeadModelForm(instance= lead)
@@ -54,6 +88,13 @@ def lead_update(request, pk):
     }
     return render(request, 'base/lead_update.html', context)
 
+
+class LeadDeleteView(DeleteView):
+    queryset = Lead.objects.all()
+    template_name = 'base/lead_delete.html'
+
+    def get_success_url(self) -> str:
+        return reverse('base:lead-list')
 
 def lead_delete(request, pk):
     lead = Lead.objects.get(pk = pk)
