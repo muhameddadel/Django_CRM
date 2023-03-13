@@ -15,6 +15,8 @@ class Lead(models.Model):
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
+    
+    
 class Agent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
