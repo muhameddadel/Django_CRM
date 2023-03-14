@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', LandingPageView.as_view(), name='landing-page' ),
     path('base/', include('base.urls',namespace= 'base')),
+    path('agents/', include('agents.urls',namespace= 'agents')),
 
     # user authentication
     path('signup/', SignupView.as_view(), name='signup'),
