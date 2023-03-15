@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.views.generic import *
+from agents.mixins import OrganisorAndLoginRequiredMixin
 from .models import Lead, Agent
 from .forms import LeadForm, LeadModelForm, CustomUserCreationForm
 # Create your views here.
@@ -49,7 +50,7 @@ def lead_detail(request, pk):
     return render(request, 'base/lead_detail.html', context)
 
 
-class LeadCreateView(LoginRequiredMixin, CreateView):
+class LeadCreateView(OrganisorAndLoginRequiredMixin, CreateView):
     form_class = LeadModelForm
     template_name = 'base/lead_create.html'
     
@@ -81,7 +82,7 @@ def lead_create(request):
     return render(request, 'base/lead_create.html', context)
 
 
-class LeadUpdateView(LoginRequiredMixin, UpdateView):
+class LeadUpdateView(OrganisorAndLoginRequiredMixin, UpdateView):
     form_class = LeadModelForm
     queryset = Lead.objects.all()
     template_name = 'base/lead_update.html'
@@ -105,7 +106,7 @@ def lead_update(request, pk):
     return render(request, 'base/lead_update.html', context)
 
 
-class LeadDeleteView(LoginRequiredMixin, DeleteView):
+class LeadDeleteView(OrganisorAndLoginRequiredMixin, DeleteView):
     queryset = Lead.objects.all()
     template_name = 'base/lead_delete.html'
 
