@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-    <a href="{% url 'base:lead-update' lead.pk %}">Go Back</a>
-    <h1>Delete {{ lead.first_name }}</h1>
+    <a href="{% url 'agents:agent-update' agent.pk %}">Go Back</a>
+    <h1>Delete {{ agent.user.username }}</h1>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
