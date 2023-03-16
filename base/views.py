@@ -23,10 +23,17 @@ def landing_page(request):
 
 
 class LeadListView(LoginRequiredMixin, ListView):
-    queryset = Lead.objects.all()
     template_name = 'base/lead_list.html'
     context_object_name = 'leads'
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(organisation = user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organisation = user.agent.organisation)
+            queryset = queryset.filter(agent__user = user)
+        return queryset
 
 def lead_list(request):
     leads = Lead.objects.all()
@@ -37,9 +44,17 @@ def lead_list(request):
 
 
 class LeadDetailView(LoginRequiredMixin, DetailView):
-    queryset = Lead.objects.all()
     template_name = 'base/lead_detail.html'
     context_object_name = 'lead'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(organisation = user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organisation = user.agent.organisation)
+            queryset = queryset.filter(agent__user = user)
+        return queryset
 
 
 def lead_detail(request, pk):
@@ -84,8 +99,11 @@ def lead_create(request):
 
 class LeadUpdateView(OrganisorAndLoginRequiredMixin, UpdateView):
     form_class = LeadModelForm
-    queryset = Lead.objects.all()
     template_name = 'base/lead_update.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Lead.objects.filter(organisation = user.userprofile)
     
     def get_success_url(self) -> str:
         return reverse('base:lead-list')
@@ -107,8 +125,11 @@ def lead_update(request, pk):
 
 
 class LeadDeleteView(OrganisorAndLoginRequiredMixin, DeleteView):
-    queryset = Lead.objects.all()
     template_name = 'base/lead_delete.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Lead.objects.filter(organisation = user.userprofile)
 
     def get_success_url(self) -> str:
         return reverse('base:lead-list')
