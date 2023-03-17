@@ -31,7 +31,7 @@ class AgentCreateView(OrganisorAndLoginRequiredMixin, CreateView):
         user.save()
         Agent.objects.create(
             user= user,
-            orgnaisation = self.request.user.userprofile,
+            organisation = self.request.user.userprofile,
         )
         send_mail(
             subject = 'You are invited to be and agent',
