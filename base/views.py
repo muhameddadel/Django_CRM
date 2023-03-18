@@ -29,21 +29,21 @@ class LeadListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         if user.is_organisor:
-            queryset = Lead.objects.filter(organisation = user.userprofile, agent__isnull = True)
+            queryset = Lead.objects.filter(organisation = user.userprofile)
         else:
-            queryset = Lead.objects.filter(organisation = user.agent.organisation, agent__isnull = True)
+            queryset = Lead.objects.filter(organisation = user.agent.organisation)
             queryset = queryset.filter(agent__user = user)
         return queryset
 
-    def get_context_data(self, **kwargs):
-        user = self.request.user
-        context = super(LeadListView, self).get_context_data(**kwargs)
-        if user.is_organisor:
-            queryset = Lead.objects.filter(organisation = user.userprofile, agent__isnull = True)
-            context.update({
-                'unassigned_leads': queryset
-            })
-        return context
+    # def get_context_data(self, **kwargs):
+    #     user = self.request.user
+    #     context = super(LeadListView, self).get_context_data(**kwargs)
+    #     if user.is_organisor:
+    #         queryset = Lead.objects.filter(organisation = user.userprofile, agent__isnull = True)
+    #         context.update({
+    #             'unassigned_leads': queryset
+    #         })
+    #     return context
 
 
 def lead_list(request):
@@ -151,24 +151,24 @@ def lead_delete(request, pk):
     return redirect('/base')
 
 
-class AssignAgentView(OrganisorAndLoginRequiredMixin, FormView):
-    template_name = 'base/assign_agent'
-    form_class = AssignAgentFrom
+# class AssignAgentView(OrganisorAndLoginRequiredMixin, FormView):
+#     template_name = 'base/assign_agent'
+#     form_class = AssignAgentFrom
 
-    def get_form_kwargs(self, **kwargs):
-        kwargs = super(AssignAgentView, self).get_form_kwargs(**kwargs)
+#     def get_form_kwargs(self, **kwargs):
+#         kwargs = super(AssignAgentView, self).get_form_kwargs(**kwargs)
 
-        kwargs.update({
-            "request": self.request
-        })
-        return kwargs
+#         kwargs.update({
+#             "request": self.request
+#         })
+#         return kwargs
     
-    def get_success_url(self) -> str:
-        return reverse('base:lead-list')
+#     def get_success_url(self) -> str:
+#         return reverse('base:lead-list')
     
-    def form_valid(self, form):
-        agent = form.cleaned_data['agent']
-        lead = Lead.objects.get(id = self.kwargs['pk'])
-        lead.agent = agent
-        lead.save()
-        return super(AssignAgentView, self).form_valid(form)
+#     def form_valid(self, form):
+#         agent = form.cleaned_data['agent']
+#         lead = Lead.objects.get(id = self.kwargs['pk'])
+#         lead.agent = agent
+#         lead.save()
+#         return super(AssignAgentView, self).form_valid(form)
