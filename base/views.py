@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.views.generic import *
 from agents.mixins import OrganisorAndLoginRequiredMixin
-from .models import Lead, Agent
+from .models import *
 from .forms import *
 # Create your views here.
 
@@ -171,3 +171,30 @@ class AssignAgentView(OrganisorAndLoginRequiredMixin, FormView):
         lead.agent = agent
         lead.save()
         return super(AssignAgentView, self).form_valid(form)
+    
+
+class CategoryListView(LoginRequiredMixin, ListView):
+    template_name = 'base/category_list.html'
+    context_object_name = 'category_list'
+
+    def get_context_data(self, **kwargs):
+        context= super(CategoryListView, self).get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(organisation = user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organisation= user.agent.organisation)
+        
+        context.update({
+            'unassigned_lead_count': queryset.filter(category__isnull= True).count()
+        })
+        return context
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Category.objects.filter(organisation = user.userprofile)
+        else:
+            queryset = Category.objects.filter(organisation= user.agent.organisation)
+        return queryset
+    
