@@ -198,3 +198,16 @@ class CategoryListView(LoginRequiredMixin, ListView):
             queryset = Category.objects.filter(organisation= user.agent.organisation)
         return queryset
     
+
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'base/category_detail.html'
+    context_object_name = 'category'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Category.objects.filter(organisation = user.userprofile)
+        else:
+            queryset = Category.objects.filter(organisation= user.agent.organisation)
+        return queryset
+    

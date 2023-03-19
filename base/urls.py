@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/assign-agent/', AssignAgentView.as_view(), name='assign-agent'),
     path('create/', LeadCreateView.as_view(), name='lead-create'),
     path('categories/', CategoryListView.as_view(), name='category-list'),
+    path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),
 ]
