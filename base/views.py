@@ -211,3 +211,19 @@ class CategoryDetailView(LoginRequiredMixin, DetailView):
             queryset = Category.objects.filter(organisation= user.agent.organisation)
         return queryset
     
+
+class LeadCategoryUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'base/lead_category_update.html'
+    form_class = LeadCategoryUpdateForm
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(organisation= user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organisation= user.agent.organisation)
+            queryset = queryset.filter(agent__user= user)
+        return queryset
+    
+    def get_success_url(self) -> str:
+        return reverse('base:lead-detail', kwargs = {'pk': self.get_object().id})
