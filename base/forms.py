@@ -9,7 +9,7 @@ User = get_user_model()
 class LeadModelForm(forms.ModelForm):
     class Meta:
         model = Lead
-        fields = '__all__'
+        fields = ('first_name', 'last_name', 'age', 'agent', 'description', 'phone_number', 'email',)
 
 class LeadForm(forms.Form):
     first_name = forms.CharField(max_length=30)
