@@ -14,13 +14,10 @@ class SignupView(CreateView):
     def get_success_url(self) -> str:
         return reverse('login')
 
+    
 class LandingPageView(TemplateView):
     template_name = 'landing.html'
-
-
-def landing_page(request):
-    return render(request, 'landing.html')
-
+    
 
 class LeadListView(LoginRequiredMixin, ListView):
     template_name = 'base/lead_list.html'
@@ -46,13 +43,6 @@ class LeadListView(LoginRequiredMixin, ListView):
         return context
 
 
-def lead_list(request):
-    leads = Lead.objects.all()
-    context = {
-        'leads': leads
-    }
-    return render(request,'base/lead_list.html', context)
-
 
 class LeadDetailView(LoginRequiredMixin, DetailView):
     template_name = 'base/lead_detail.html'
@@ -67,13 +57,6 @@ class LeadDetailView(LoginRequiredMixin, DetailView):
             queryset = queryset.filter(agent__user = user)
         return queryset
 
-
-def lead_detail(request, pk):
-    lead = Lead.objects.get(pk= pk)
-    context = {
-        'lead': lead
-    }
-    return render(request, 'base/lead_detail.html', context)
 
 
 class LeadCreateView(OrganisorAndLoginRequiredMixin, CreateView):
@@ -96,21 +79,6 @@ class LeadCreateView(OrganisorAndLoginRequiredMixin, CreateView):
         return super(LeadCreateView, self).form_valid(form)
 
 
-def lead_create(request):
-    if request.method == "POST":
-        form = LeadModelForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/base')
-    else:
-        form = LeadModelForm()
-
-    context = {
-        "form": form
-    }
-    return render(request, 'base/lead_create.html', context)
-
-
 class LeadUpdateView(OrganisorAndLoginRequiredMixin, UpdateView):
     form_class = LeadModelForm
     template_name = 'base/lead_update.html'
@@ -123,21 +91,6 @@ class LeadUpdateView(OrganisorAndLoginRequiredMixin, UpdateView):
         return reverse('base:lead-list')
 
 
-def lead_update(request, pk):
-    lead = Lead.objects.get(pk= pk)
-    form = LeadModelForm(instance= lead)
-    if request.method == "POST":
-        form = LeadModelForm(request.POST, instance= lead)
-        if form.is_valid():
-            form.save()
-            return redirect('/base')
-    context = {
-        'form': form,
-        'lead': lead
-    }
-    return render(request, 'base/lead_update.html', context)
-
-
 class LeadDeleteView(OrganisorAndLoginRequiredMixin, DeleteView):
     template_name = 'base/lead_delete.html'
 
@@ -147,11 +100,6 @@ class LeadDeleteView(OrganisorAndLoginRequiredMixin, DeleteView):
 
     def get_success_url(self) -> str:
         return reverse('base:lead-list')
-
-def lead_delete(request, pk):
-    lead = Lead.objects.get(pk = pk)
-    lead.delete()
-    return redirect('/base')
 
 
 class AssignAgentView(OrganisorAndLoginRequiredMixin, FormView):
